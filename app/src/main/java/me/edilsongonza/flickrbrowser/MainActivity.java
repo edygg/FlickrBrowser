@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -18,6 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 
@@ -25,12 +29,19 @@ public class MainActivity extends ActionBarActivity {
 
     private final String FLICKR_FEED_URL = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
     public final String TAG = MainActivity.class.getSimpleName();
+    private ListView photoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initComponents();
+
         getJSONData();
+    }
+
+    private void initComponents() {
+        photoList = (ListView) findViewById(R.id.photo_list);
     }
 
     public void getJSONData() {
@@ -42,9 +53,10 @@ public class MainActivity extends ActionBarActivity {
                     JSONArray items = response.getJSONArray("items");
                     Gson gson = new GsonBuilder().create();
                     FlickrPhotoItem[] photos = gson.fromJson(items.toString(), FlickrPhotoItem[].class);
-                    for (int i = 0; i < photos.length; i++){
-                        Log.d(TAG, photos[i].getMedia().getLinkToMedia());
-                    }
+                    List<FlickrPhotoItem> allPhotos = new ArrayList<FlickrPhotoItem>(Arrays.asList(photos));
+                    FlickrPhotoListAdapter adapter = new FlickrPhotoListAdapter(getApplicationContext(), R.layout.photo_item_layout, allPhotos);
+                    photoList.setAdapter(adapter);
+
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }

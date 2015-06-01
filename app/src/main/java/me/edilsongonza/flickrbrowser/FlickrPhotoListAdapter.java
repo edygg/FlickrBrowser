@@ -1,6 +1,7 @@
 package me.edilsongonza.flickrbrowser;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,10 +40,12 @@ public class FlickrPhotoListAdapter extends ArrayAdapter<FlickrPhotoItem> {
 
             if (titleTextView != null) {
                 titleTextView.setText(photo.getTitle());
+                titleTextView.setTextColor(Color.rgb(0, 0, 0));
             }
 
             if (authorTextView != null) {
                 authorTextView.setText(photo.getAuthor());
+                authorTextView.setTextColor(Color.rgb(0,0,0));
             }
         }
 
