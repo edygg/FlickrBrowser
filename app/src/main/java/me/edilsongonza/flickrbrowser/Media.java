@@ -10,7 +10,7 @@ public class Media {
         return m.replaceAll("_m", "");
     }
 
-    public String getLinkToMediaMobile() {
+    public String getLinkToMobileMedia() {
         return m;
     }
 
