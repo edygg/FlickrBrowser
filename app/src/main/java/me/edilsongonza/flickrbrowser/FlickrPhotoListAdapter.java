@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
+
 import java.util.List;
 
 /**
@@ -35,8 +37,13 @@ public class FlickrPhotoListAdapter extends ArrayAdapter<FlickrPhotoItem> {
         FlickrPhotoItem photo = getItem(position);
 
         if (photo != null) {
+            NetworkImageView currentPhoto = (NetworkImageView) v.findViewById(R.id.photo);
             TextView titleTextView = (TextView) v.findViewById(R.id.title);
             TextView authorTextView = (TextView) v.findViewById(R.id.author);
+
+            if (currentPhoto != null) {
+                currentPhoto.setImageUrl(photo.getMedia().getLinkToMedia(), AppController.getIntance().getImageLoader());
+            }
 
             if (titleTextView != null) {
                 titleTextView.setText(photo.getTitle());
