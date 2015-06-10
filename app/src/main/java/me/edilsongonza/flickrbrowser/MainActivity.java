@@ -2,11 +2,12 @@ package me.edilsongonza.flickrbrowser;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -23,27 +24,30 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private static final String FLICKR_FEED_URL = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
     public static final String TAG = MainActivity.class.getSimpleName();
-    private ListView photoList;
+    private RecyclerView photoList;
+    private LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initComponents();
-        setProgressBarIndeterminateVisibility(true);
         getJSONData();
     }
 
     private void initComponents() {
-        photoList = (ListView) findViewById(R.id.photo_list);
+        photoList = (RecyclerView) findViewById(R.id.photo_list);
+        photoList.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        photoList.setLayoutManager(layoutManager);
+        photoList.setItemAnimator(new DefaultItemAnimator());
     }
 
     public void getJSONData() {
@@ -52,12 +56,11 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    setProgressBarIndeterminateVisibility(false);
                     JSONArray items = response.getJSONArray("items");
                     Gson gson = new GsonBuilder().create();
                     FlickrPhotoItem[] photos = gson.fromJson(items.toString(), FlickrPhotoItem[].class);
                     List<FlickrPhotoItem> allPhotos = new ArrayList<FlickrPhotoItem>(Arrays.asList(photos));
-                    FlickrPhotoListAdapter adapter = new FlickrPhotoListAdapter(getApplicationContext(), R.layout.photo_item_layout, allPhotos);
+                    FlickrPhotoListAdapter adapter = new FlickrPhotoListAdapter(allPhotos);
                     photoList.setAdapter(adapter);
 
                 } catch (JSONException ex) {
