@@ -1,5 +1,6 @@
 package me.edilsongonza.flickrbrowser;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -26,12 +27,13 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String FLICKR_FEED_URL = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
     public static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView photoList;
     private LinearLayoutManager layoutManager;
+    private SwipeRefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,9 @@ public class MainActivity extends ActionBarActivity {
         layoutManager = new LinearLayoutManager(this);
         photoList.setLayoutManager(layoutManager);
         photoList.setItemAnimator(new DefaultItemAnimator());
+
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_container);
+        refreshLayout.setOnRefreshListener(this);
     }
 
     public void getJSONData() {
@@ -62,7 +67,7 @@ public class MainActivity extends ActionBarActivity {
                     List<FlickrPhotoItem> allPhotos = new ArrayList<FlickrPhotoItem>(Arrays.asList(photos));
                     FlickrPhotoListAdapter adapter = new FlickrPhotoListAdapter(allPhotos);
                     photoList.setAdapter(adapter);
-
+                    refreshLayout.setRefreshing(false);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
@@ -98,5 +103,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRefresh() {
+        getJSONData();
     }
 }
