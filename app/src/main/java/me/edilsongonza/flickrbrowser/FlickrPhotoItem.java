@@ -63,7 +63,8 @@ public class FlickrPhotoItem {
     }
 
     public String getAuthor() {
-        return author;
+        String retString = author.replace("nobody@flickr.com (", "").replace(")", "");
+        return retString;
     }
 
     public void setAuthor(String author) {
